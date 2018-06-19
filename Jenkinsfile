@@ -1,50 +1,22 @@
 pipeline {
-    agent any
-    tools {
-        maven 'maven3'
-
-    }
-    
+    agent { docker 'maven:3.3.3' }
     stages {
-        stage ('Initialize') {
+        stage('build') {
             steps {
-                sh '''
-                    echo "PATH = ${PATH}"
-                    echo "M2_HOME = ${M2_HOME}"
-                '''
+                bat 'mvn --version'
             }
         }
-                stage ('Preparation') {
-        steps {
-                git 'https://github.com/naresh35442/SpringBootHelloWorld.git'
-            }
-        }
-stage ('Build') {
-            steps {
-                sh 'mvn -Dmaven.test.failure.ignore=true clean package' 
-            }
-            post {
-                success {
-                    junit 'target/surefire-reports/**/*.xml' 
-                }
-            }
-        }
-        stage ('Junit Test') {
-          steps {
-            sh 'mvn test' 
-            }
-            post {
-              success {
-               junit 'target/surefire-reports/**/*.xml' 
-             }
-            }
-        }
-       stage ('Results') {
         
-        steps {
-             junit '**/target/surefire-reports/TEST-*.xml'
-           archive 'target/*.jar'
+        stage('Test') {
+            steps {
+                bat 'Testing..'
             }
         }
+        stage('Deploy') {
+            steps {
+                bat 'Deploying....'
+                bat 'mvn --version'
+             }
+         }
     }
 }
